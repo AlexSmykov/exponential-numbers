@@ -4,7 +4,12 @@ import {
   plusDifferentExponentLevelNumber,
   plusEqualExponentLevelNumber,
 } from '../utils/util-math.utils';
-import { DECIMAL_DIGITS, VALUE_EXPONENT_DIFFERENCE_LIMIT, VALUE_EXPONENT_LIMIT } from '../const';
+import {
+  DECIMAL_DIGITS,
+  EXPONENT_COUNT_LIMIT,
+  VALUE_EXPONENT_DIFFERENCE_LIMIT,
+  VALUE_EXPONENT_LIMIT,
+} from '../const';
 
 export class ExponentNumber {
   exponentFactor = 0;
@@ -68,7 +73,12 @@ export class ExponentNumber {
       numberText = `${Number(firstPart)}e${numberExp}`;
     }
 
-    return `${'e'.repeat(this.exponentFactor)}${numberText}`;
+    const exponentText =
+      this.exponentFactor <= EXPONENT_COUNT_LIMIT
+        ? 'e'.repeat(this.exponentFactor)
+        : `e(${this.exponentFactor})`;
+
+    return `${exponentText}${numberText}`;
   }
 
   plus(otherNumber: ExponentNumber): ExponentNumber {
