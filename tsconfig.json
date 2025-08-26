@@ -6,8 +6,13 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
+    "rootDir": "src",
+    "baseUrl": "./",
     "outDir": "dist",
-    "declaration": true
+    "declaration": true,
+    "paths": {
+      "src/*": ["src/*"]
+    }
   },
   "include": ["src"]
 }

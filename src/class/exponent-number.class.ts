@@ -3,8 +3,8 @@ import {
   minusEqualExponentLevelNumber,
   plusDifferentExponentLevelNumber,
   plusEqualExponentLevelNumber,
-} from 'src/utils/util-math.utils';
-import { VALUE_EXPONENT_LIMIT } from 'src/const';
+} from '../utils/util-math.utils';
+import { DECIMAL_DIGITS, VALUE_EXPONENT_DIFFERENCE_LIMIT, VALUE_EXPONENT_LIMIT } from '../const';
 
 export class ExponentNumber {
   exponentFactor = 0;
@@ -22,25 +22,39 @@ export class ExponentNumber {
   }
 
   normalize(): void {
-    if (Math.log10(this.value) >= VALUE_EXPONENT_LIMIT) {
+    while (Math.log10(this.value) >= VALUE_EXPONENT_LIMIT) {
       this.exponentFactor += 1;
       this.value = Math.log10(this.value);
-
-      return;
     }
 
-    if (this.exponentFactor > 1 && this.value < VALUE_EXPONENT_LIMIT) {
+    while (this.exponentFactor > 1 && this.value < VALUE_EXPONENT_LIMIT) {
       this.exponentFactor -= 1;
       this.value = Math.pow(10, this.value);
     }
   }
 
-  applyNewValues(newNumber: ExponentNumber): ExponentNumber {
-    return new ExponentNumber(newNumber.exponentFactor, newNumber.value);
+  applyNewValues(newNumber: ExponentNumber): void {
+    this.exponentFactor = newNumber.exponentFactor;
+    this.value = newNumber.value;
   }
 
   toString(): string {
-    return `${'e'.repeat(this.exponentFactor)}${this.value.toPrecision(4)}`;
+    const cutNumber = Number(this.value.toPrecision(DECIMAL_DIGITS));
+
+    let numberText = cutNumber.toString();
+
+    if (Math.log10(cutNumber) > VALUE_EXPONENT_DIFFERENCE_LIMIT) {
+      const numberExp = Math.floor(Math.log10(cutNumber));
+      const firstNumbers = cutNumber
+        .toString()
+        .replace('.', '')
+        .split('e')[0]
+        .slice(0, DECIMAL_DIGITS);
+      const firstPart = `${firstNumbers[0]}.${firstNumbers.slice(1)}`;
+      numberText = `${Number(firstPart)}e${numberExp}`;
+    }
+
+    return `${'e'.repeat(this.exponentFactor)}${numberText}`;
   }
 
   plus(otherNumber: ExponentNumber): ExponentNumber {

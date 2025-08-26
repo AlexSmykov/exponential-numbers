@@ -1,1 +1,1 @@
-export * from './class/exponent-number.class';
+export * from './exports';

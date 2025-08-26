@@ -1,20 +1,22 @@
-import { ExponentNumber } from 'src/class/exponent-number.class';
-import { VALUE_EXPONENT_DIFFERENCE_LIMIT, ZERO_NUMBER } from 'src/const';
+import { ExponentNumber } from "../class/exponent-number.class";
+import { VALUE_EXPONENT_DIFFERENCE_LIMIT } from "../const";
 
 export function plusEqualExponentLevelNumber(
   first: ExponentNumber,
   second: ExponentNumber,
 ): ExponentNumber {
   if (first.exponentFactor !== second.exponentFactor) {
-    throw new Error('Expected exponentFactor to be equal');
+    throw new Error("Expected exponentFactor to be equal");
   }
 
   if (second.exponentFactor > 1) {
-    throw new Error('Expected exponentFactor to be lower or equal than 1');
+    throw new Error("Expected exponentFactor to be lower or equal than 1");
   }
 
   if (second.exponentFactor === 1) {
-    if (Math.abs(first.value - second.value) > VALUE_EXPONENT_DIFFERENCE_LIMIT) {
+    if (
+      Math.abs(first.value - second.value) > VALUE_EXPONENT_DIFFERENCE_LIMIT
+    ) {
       return first.value - second.value > 0 ? first.copy() : second.copy();
     }
 
@@ -35,15 +37,17 @@ export function plusDifferentExponentLevelNumber(
   second: ExponentNumber,
 ): ExponentNumber {
   if (first.exponentFactor === second.exponentFactor) {
-    throw new Error('Expected exponentFactor to be different');
+    throw new Error("Expected exponentFactor to be different");
   }
 
   if (first.exponentFactor > 1 || second.exponentFactor > 1) {
-    throw new Error('Expected exponentFactor to be lower or equal than 1');
+    throw new Error("Expected exponentFactor to be lower or equal than 1");
   }
 
-  const biggerValue = first.exponentFactor > second.exponentFactor ? first : second;
-  const smallerValue = first.exponentFactor > second.exponentFactor ? second : first;
+  const biggerValue =
+    first.exponentFactor > second.exponentFactor ? first : second;
+  const smallerValue =
+    first.exponentFactor > second.exponentFactor ? second : first;
 
   const smallValueExponent = Math.log10(smallerValue.value);
   const exponentDifference = biggerValue.value - smallValueExponent;
@@ -63,16 +67,16 @@ export function minusEqualExponentLevelNumber(
   second: ExponentNumber,
 ): ExponentNumber {
   if (first.exponentFactor !== second.exponentFactor) {
-    throw new Error('Expected exponentFactor to be equal');
+    throw new Error("Expected exponentFactor to be equal");
   }
 
   if (second.exponentFactor > 1) {
-    throw new Error('Expected exponentFactor to be lower or equal than 1');
+    throw new Error("Expected exponentFactor to be lower or equal than 1");
   }
 
   if (second.exponentFactor === 1) {
     if (second.value >= first.value) {
-      return ZERO_NUMBER.copy();
+      return new ExponentNumber(0, 0);
     }
 
     if (first.value - second.value > VALUE_EXPONENT_DIFFERENCE_LIMIT) {
@@ -96,15 +100,15 @@ export function minusDifferentExponentLevelNumber(
   second: ExponentNumber,
 ): ExponentNumber {
   if (first.exponentFactor === second.exponentFactor) {
-    throw new Error('Expected exponentFactor to be different');
+    throw new Error("Expected exponentFactor to be different");
   }
 
   if (first.exponentFactor > 1 || second.exponentFactor > 1) {
-    throw new Error('Expected exponentFactor to be lower or equal than 1');
+    throw new Error("Expected exponentFactor to be lower or equal than 1");
   }
 
   if (second.exponentFactor > first.exponentFactor) {
-    return ZERO_NUMBER.copy();
+    return new ExponentNumber(0, 0);
   }
 
   const smallValueExponent = Math.log10(second.value);
@@ -116,6 +120,7 @@ export function minusDifferentExponentLevelNumber(
 
   return new ExponentNumber(
     1,
-    first.value - smallValueExponent / Math.pow(10, first.value - smallValueExponent),
+    first.value -
+      smallValueExponent / Math.pow(10, first.value - smallValueExponent),
   );
 }
