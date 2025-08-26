@@ -521,6 +521,98 @@ describe('Power test', () => {
     expect(first.toString()).toBe('eeee100');
   });
 });
+describe('Root test', () => {
+  test('1', () => {
+    const first = new ExponentNumber(0, 9);
+    const second = new ExponentNumber(0, 2);
+    first.root(second);
+    expect(first.toString()).toBe('3');
+  });
+
+  test('2', () => {
+    const first = new ExponentNumber(0, 81);
+    const second = new ExponentNumber(0, 4);
+    first.root(second);
+    expect(first.toString()).toBe('3');
+  });
+
+  test('3', () => {
+    const first = new ExponentNumber(0, 15.849);
+    const second = new ExponentNumber(0, 1.2);
+    first.root(second);
+    expect(first.toString()).toBe('10');
+  });
+
+  test('4', () => {
+    const first = new ExponentNumber(1, 144);
+    const second = new ExponentNumber(0, 1.2);
+    first.root(second);
+    expect(first.toString()).toBe('e120');
+  });
+
+  test('5', () => {
+    const first = new ExponentNumber(1, 1000);
+    const second = new ExponentNumber(0, 10);
+    first.root(second);
+    expect(first.toString()).toBe('e100');
+  });
+
+  test('6', () => {
+    const first = new ExponentNumber(2, 103);
+    const second = new ExponentNumber(1, 100);
+    first.root(second);
+    expect(first.toString()).toBe('e1000');
+  });
+
+  test('7', () => {
+    const first = new ExponentNumber(3, 100);
+    const second = new ExponentNumber(2, 100);
+    first.root(second);
+    expect(first.toString()).toBe('10');
+  });
+
+  test('8', () => {
+    const first = new ExponentNumber(0, 3);
+    const second = new ExponentNumber(0, 0.5);
+    first.root(second);
+    expect(first.toString()).toBe('9');
+  });
+
+  test('9', () => {
+    const first = new ExponentNumber(0, 3);
+    const second = new ExponentNumber(0, 0.25);
+    first.root(second);
+    expect(first.toString()).toBe('81');
+  });
+
+  test('10', () => {
+    const first = new ExponentNumber(0, 1.5849);
+    const second = new ExponentNumber(0, 0.1);
+    first.root(second);
+    expect(first.toString()).toBe('100');
+  });
+
+  test('11', () => {
+    const first = new ExponentNumber(1, 100);
+    const second = new ExponentNumber(0, 0.1);
+    first.root(second);
+    expect(first.toString()).toBe('e1000');
+  });
+
+  test('12', () => {
+    const first = new ExponentNumber(3, 10);
+    const second = new ExponentNumber(3, 10);
+    first.root(second);
+    expect(first.toString()).toBe('0');
+  });
+
+  test('13', () => {
+    const first = new ExponentNumber(4, 100);
+    const second = new ExponentNumber(3, 100);
+    first.root(second);
+    expect(first.toString()).toBe('10');
+  });
+});
 
 describe('Log test', () => {
   test('1', () => {

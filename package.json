@@ -1,6 +1,6 @@
 {
   "name": "exponential-number",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Small package with class to work with big numbers. This class allows to work with 1e...(1.8e308)...e1e100. Allowed methods",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

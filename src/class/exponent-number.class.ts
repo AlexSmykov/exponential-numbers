@@ -38,14 +38,18 @@ export class ExponentNumber {
     }
 
     if (this.value === Math.pow(10, -VALUE_EXPONENT_DIFFERENCE_LIMIT)) {
-      this.value = 0;
-      this.exponentFactor = 0;
+      this.resetValue();
     }
   }
 
   applyNewValues(newNumber: ExponentNumber): void {
     this.exponentFactor = newNumber.exponentFactor;
     this.value = newNumber.value;
+  }
+
+  resetValue(): void {
+    this.exponentFactor = 0;
+    this.value = 0;
   }
 
   toString(): string {
@@ -92,14 +96,15 @@ export class ExponentNumber {
     if (this.exponentFactor === otherNumber.exponentFactor) {
       if (this.exponentFactor > 1) {
         if (otherNumber.value >= this.value) {
-          this.applyNewValues(new ExponentNumber(0, 0));
+          this.resetValue();
         }
 
         return this;
       }
 
+      console.log(this, otherNumber);
       if (this.value === otherNumber.value) {
-        this.applyNewValues(new ExponentNumber(0, 0));
+        this.resetValue();
 
         return this;
       }
@@ -109,8 +114,8 @@ export class ExponentNumber {
       if (this.exponentFactor <= 1 && otherNumber.exponentFactor <= 1) {
         this.applyNewValues(minusDifferentExponentLevelNumber(this, otherNumber));
       } else {
-        if (otherNumber.exponentFactor > this.exponentFactor) {
-          this.applyNewValues(new ExponentNumber(0, 0));
+        if (otherNumber.exponentFactor >= this.exponentFactor) {
+          this.resetValue();
         }
       }
     }
@@ -142,6 +147,7 @@ export class ExponentNumber {
 
     result.minus(new ExponentNumber(otherNumber.exponentFactor, Math.log10(otherNumber.value)));
 
+    console.log(result);
     this.exponentFactor = result.exponentFactor + 1;
     this.value = result.value;
 
@@ -161,6 +167,34 @@ export class ExponentNumber {
     this.normalize();
 
     return this;
+  }
+
+  root(otherNumber: ExponentNumber): ExponentNumber {
+    const result = new ExponentNumber(this.exponentFactor, Math.log10(this.value));
+
+    if (
+      result.exponentFactor >= 1 &&
+      (otherNumber.exponentFactor > result.exponentFactor ||
+        (otherNumber.exponentFactor === result.exponentFactor && otherNumber.value > result.value))
+    ) {
+      this.resetValue();
+
+      return this;
+    }
+
+    result.divide(otherNumber);
+
+    console.log(result);
+    this.exponentFactor = result.exponentFactor + 1;
+    this.value = result.value;
+
+    this.normalize();
+
+    return this;
+  }
+
+  sqrt(): ExponentNumber {
+    return this.root(new ExponentNumber(0, 2));
   }
 
   log(base: ExponentNumber): ExponentNumber {
