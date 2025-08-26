@@ -1,0 +1,26 @@
+{
+  "name": "exponential-number",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -w",
+    "test": "jest --config=jest.config.js test.ts"
+  },
+  "keywords": [
+    "typescript",
+    "numbers",
+    "big-numbers",
+    "utils",
+    "exponent"
+  ],
+  "devDependencies": {
+    "@jest/globals": "^30.0.5",
+    "prettier": "^3.6.2",
+    "ts-jest": "^29.4.1",
+    "typescript": "^5.5.3"
+  },
+  "private": false
+}
