@@ -212,7 +212,7 @@ export class ExponentNumber {
     return new ExponentNumber(this.exponentFactor - 1, this.value);
   }
 
-  isMoreThanValue(otherNumber: ExponentNumber): boolean {
+  isGreaterThanValue(otherNumber: ExponentNumber): boolean {
     return (
       this.exponentFactor > otherNumber.exponentFactor ||
       (this.exponentFactor === otherNumber.exponentFactor && this.value > otherNumber.value)
@@ -223,7 +223,7 @@ export class ExponentNumber {
     return otherNumber.exponentFactor === this.exponentFactor && otherNumber.value === this.value;
   }
 
-  isMoreThanOrEqualValue(otherNumber: ExponentNumber): boolean {
-    return this.isMoreThanValue(otherNumber) || this.isEqual(otherNumber);
+  isGreaterThanOrEqualValue(otherNumber: ExponentNumber): boolean {
+    return this.isGreaterThanValue(otherNumber) || this.isEqual(otherNumber);
   }
 }
