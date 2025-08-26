@@ -27,9 +27,19 @@ export class ExponentNumber {
       this.value = Math.log10(this.value);
     }
 
-    while (this.exponentFactor > 1 && this.value < VALUE_EXPONENT_LIMIT) {
+    while (this.exponentFactor >= 1 && this.value < VALUE_EXPONENT_LIMIT) {
       this.exponentFactor -= 1;
       this.value = Math.pow(10, this.value);
+    }
+
+    while (this.exponentFactor < 0 && this.value > 0) {
+      this.exponentFactor += 1;
+      this.value = Math.max(Math.log10(this.value), 0);
+    }
+
+    if (this.value === Math.pow(10, -VALUE_EXPONENT_DIFFERENCE_LIMIT)) {
+      this.value = 0;
+      this.exponentFactor = 0;
     }
   }
 
@@ -43,7 +53,7 @@ export class ExponentNumber {
 
     let numberText = cutNumber.toString();
 
-    if (Math.log10(cutNumber) > VALUE_EXPONENT_DIFFERENCE_LIMIT) {
+    if (Math.log10(cutNumber) >= VALUE_EXPONENT_DIFFERENCE_LIMIT) {
       const numberExp = Math.floor(Math.log10(cutNumber));
       const firstNumbers = cutNumber
         .toString()
@@ -65,12 +75,11 @@ export class ExponentNumber {
 
       this.applyNewValues(plusEqualExponentLevelNumber(this, otherNumber));
     } else {
-      if (this.exponentFactor > 1 || otherNumber.exponentFactor > 1) {
-        if (otherNumber.exponentFactor > this.exponentFactor) {
-          this.applyNewValues(otherNumber);
-        }
-
+      if (this.exponentFactor <= 1 && otherNumber.exponentFactor <= 1) {
         this.applyNewValues(plusDifferentExponentLevelNumber(this, otherNumber));
+      } else {
+        const biggerNumber = this.exponentFactor > otherNumber.exponentFactor ? this : otherNumber;
+        this.applyNewValues(biggerNumber);
       }
     }
 
@@ -82,6 +91,10 @@ export class ExponentNumber {
   minus(otherNumber: ExponentNumber): ExponentNumber {
     if (this.exponentFactor === otherNumber.exponentFactor) {
       if (this.exponentFactor > 1) {
+        if (otherNumber.value >= this.value) {
+          this.applyNewValues(new ExponentNumber(0, 0));
+        }
+
         return this;
       }
 
@@ -93,12 +106,12 @@ export class ExponentNumber {
 
       this.applyNewValues(minusEqualExponentLevelNumber(this, otherNumber));
     } else {
-      if (this.exponentFactor > 1 || otherNumber.exponentFactor > 1) {
+      if (this.exponentFactor <= 1 && otherNumber.exponentFactor <= 1) {
+        this.applyNewValues(minusDifferentExponentLevelNumber(this, otherNumber));
+      } else {
         if (otherNumber.exponentFactor > this.exponentFactor) {
           this.applyNewValues(new ExponentNumber(0, 0));
         }
-
-        this.applyNewValues(minusDifferentExponentLevelNumber(this, otherNumber));
       }
     }
 
@@ -121,6 +134,10 @@ export class ExponentNumber {
   }
 
   divide(otherNumber: ExponentNumber): ExponentNumber {
+    if (this.exponentFactor === 0 && this.value === 0) {
+      return this;
+    }
+
     const result = new ExponentNumber(this.exponentFactor, Math.log10(this.value));
 
     result.minus(new ExponentNumber(otherNumber.exponentFactor, Math.log10(otherNumber.value)));
@@ -148,7 +165,7 @@ export class ExponentNumber {
 
   log(base: ExponentNumber): ExponentNumber {
     const result = new ExponentNumber(this.exponentFactor, Math.log10(this.value));
-    result.minus(new ExponentNumber(base.exponentFactor, Math.log10(base.value)));
+    result.divide(new ExponentNumber(base.exponentFactor, Math.log10(base.value)));
 
     this.applyNewValues(result);
 
@@ -158,21 +175,21 @@ export class ExponentNumber {
   }
 
   log10(): ExponentNumber {
-    return this.log(new ExponentNumber(0, 10));
+    return new ExponentNumber(this.exponentFactor - 1, this.value);
   }
 
   isMoreThanValue(otherNumber: ExponentNumber): boolean {
     return (
-      otherNumber.exponentFactor > this.exponentFactor ||
-      (otherNumber.exponentFactor === this.exponentFactor && otherNumber.value > this.value)
+      this.exponentFactor > otherNumber.exponentFactor ||
+      (this.exponentFactor === otherNumber.exponentFactor && this.value > otherNumber.value)
     );
   }
 
-  isEqualThanValue(otherNumber: ExponentNumber): boolean {
+  isEqual(otherNumber: ExponentNumber): boolean {
     return otherNumber.exponentFactor === this.exponentFactor && otherNumber.value === this.value;
   }
 
-  isMoreOrEqualThanValue(otherNumber: ExponentNumber): boolean {
-    return this.isMoreThanValue(otherNumber) || this.isEqualThanValue(otherNumber);
+  isMoreThanOrEqualValue(otherNumber: ExponentNumber): boolean {
+    return this.isMoreThanValue(otherNumber) || this.isEqual(otherNumber);
   }
 }
