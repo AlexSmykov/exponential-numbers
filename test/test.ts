@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 import { ExponentNumber } from '../src';
-import { VALUE_EXPONENT_DIFFERENCE_LIMIT } from '../src/const';
+import { EXPONENT_COUNT_LIMIT, VALUE_EXPONENT_DIFFERENCE_LIMIT } from '../src/const';
 
 describe('Print test', () => {
   test('1', () => {
@@ -61,6 +61,22 @@ describe('Print test', () => {
 
   test('13', () => {
     expect(new ExponentNumber(0, 0).toString()).toBe('0');
+  });
+
+  test('14', () => {
+    expect(new ExponentNumber(10, 100).toString()).toBe('e(10)100');
+  });
+
+  test('15', () => {
+    expect(new ExponentNumber(EXPONENT_COUNT_LIMIT, 100).toString()).toBe(
+      `${'e'.repeat(EXPONENT_COUNT_LIMIT)}100`,
+    );
+  });
+
+  test('16', () => {
+    expect(new ExponentNumber(EXPONENT_COUNT_LIMIT + 1, 100).toString()).toBe(
+      `e(${EXPONENT_COUNT_LIMIT + 1})100`,
+    );
   });
 });
 
@@ -521,6 +537,7 @@ describe('Power test', () => {
     expect(first.toString()).toBe('eeee100');
   });
 });
+
 describe('Root test', () => {
   test('1', () => {
     const first = new ExponentNumber(0, 9);
