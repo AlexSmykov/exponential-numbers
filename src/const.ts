@@ -1,0 +1,3 @@
+export const VALUE_EXPONENT_LIMIT = 100;
+export const VALUE_EXPONENT_DIFFERENCE_LIMIT = 12;
+export const DECIMAL_DIGITS = 5;
