@@ -1,10 +1,11 @@
 {
   "name": "exponential-number",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.1.1",
+  "description": "Small package with class to work with big numbers. This class allows to work with 1e...(1.8e308)...e1e100. Allowed methods",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "license": "Apache-2.0",
   "scripts": {
     "build": "tsc -w",
     "test": "jest --config=jest.config.js test.ts"
