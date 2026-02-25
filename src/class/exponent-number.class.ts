@@ -112,7 +112,6 @@ export class ExponentNumber {
         return this;
       }
 
-      console.log(this, otherNumber);
       if (this.value === otherNumber.value) {
         this.resetValue();
 
@@ -157,7 +156,6 @@ export class ExponentNumber {
 
     result.minus(new ExponentNumber(otherNumber.exponentFactor, Math.log10(otherNumber.value)));
 
-    console.log(result);
     this.exponentFactor = result.exponentFactor + 1;
     this.value = result.value;
 
@@ -194,7 +192,6 @@ export class ExponentNumber {
 
     result.divide(otherNumber);
 
-    console.log(result);
     this.exponentFactor = result.exponentFactor + 1;
     this.value = result.value;
 
