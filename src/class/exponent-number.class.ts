@@ -205,8 +205,8 @@ export class ExponentNumber {
   }
 
   log(base: ExponentNumber): ExponentNumber {
-    const result = new ExponentNumber(this.exponentFactor, Math.log10(this.value));
-    result.divide(new ExponentNumber(base.exponentFactor, Math.log10(base.value)));
+    const result = new ExponentNumber(this.exponentFactor, Math.log10(this.value + 1));
+    result.divide(new ExponentNumber(base.exponentFactor, Math.log10(base.value + 1)));
 
     this.applyNewValues(result);
 
