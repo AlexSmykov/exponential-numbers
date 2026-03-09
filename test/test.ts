@@ -270,7 +270,7 @@ describe('Multiply test', () => {
   test('2', () => {
     const first = new ExponentNumber(0, 1);
     const second = new ExponentNumber(0, 1);
-    first.multiply(second);
+    first.multiply(second).multiply(second);
     expect(first.toString()).toBe('1');
   });
 
