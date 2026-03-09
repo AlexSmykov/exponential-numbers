@@ -116,3 +116,7 @@ export function minusDifferentExponentLevelNumber(
 
   return new ExponentNumber(1, first.value + Math.log10(1 - 1 / Math.pow(10, exponentDifference)));
 }
+
+export function safeLog10(value: ExponentNumber): number {
+  return Math.log10(value.value + (value.exponentFactor > 0 ? 0 : 1));
+}

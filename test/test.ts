@@ -536,6 +536,13 @@ describe('Power test', () => {
     first.power(second);
     expect(first.toString()).toBe('eeee100');
   });
+
+  test('16', () => {
+    const first = new ExponentNumber(0, 0.5);
+    const second = new ExponentNumber(0, 2);
+    first.power(second);
+    expect(first.toString()).toBe('0.25');
+  });
 });
 
 describe('Root test', () => {

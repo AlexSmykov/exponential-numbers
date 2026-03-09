@@ -3,6 +3,7 @@ import {
   minusEqualExponentLevelNumber,
   plusDifferentExponentLevelNumber,
   plusEqualExponentLevelNumber,
+  safeLog10,
 } from '../utils/util-math.utils';
 import {
   DECIMAL_DIGITS,
@@ -135,9 +136,9 @@ export class ExponentNumber {
   }
 
   multiply(otherNumber: ExponentNumber): ExponentNumber {
-    const result = new ExponentNumber(this.exponentFactor, Math.log10(this.value));
+    const result = new ExponentNumber(this.exponentFactor, safeLog10(this));
 
-    result.plus(new ExponentNumber(otherNumber.exponentFactor, Math.log10(otherNumber.value)));
+    result.plus(new ExponentNumber(otherNumber.exponentFactor, safeLog10(otherNumber)));
 
     this.exponentFactor = result.exponentFactor + 1;
     this.value = result.value;
@@ -152,9 +153,9 @@ export class ExponentNumber {
       return this;
     }
 
-    const result = new ExponentNumber(this.exponentFactor, Math.log10(this.value));
+    const result = new ExponentNumber(this.exponentFactor, safeLog10(this));
 
-    result.minus(new ExponentNumber(otherNumber.exponentFactor, Math.log10(otherNumber.value)));
+    result.minus(new ExponentNumber(otherNumber.exponentFactor, safeLog10(otherNumber)));
 
     this.exponentFactor = result.exponentFactor + 1;
     this.value = result.value;
@@ -164,21 +165,29 @@ export class ExponentNumber {
     return this;
   }
 
-  power(otherNumber: ExponentNumber): ExponentNumber {
-    const result = new ExponentNumber(this.exponentFactor, Math.log10(this.value));
+  power(power: ExponentNumber): ExponentNumber {
+    if (this.exponentFactor === 0 && this.value < 1) {
+      if (power.exponentFactor > 0) {
+        this.value = 0;
+      } else {
+        this.value = Math.pow(this.value, power.value);
+      }
+    } else {
+      const result = new ExponentNumber(this.exponentFactor, safeLog10(this));
 
-    result.multiply(otherNumber);
+      result.multiply(power);
 
-    this.exponentFactor = result.exponentFactor + 1;
-    this.value = result.value;
+      this.exponentFactor = result.exponentFactor + 1;
+      this.value = result.value;
 
-    this.normalize();
+      this.normalize();
+    }
 
     return this;
   }
 
   root(otherNumber: ExponentNumber): ExponentNumber {
-    const result = new ExponentNumber(this.exponentFactor, Math.log10(this.value));
+    const result = new ExponentNumber(this.exponentFactor, safeLog10(this));
 
     if (
       result.exponentFactor >= 1 &&
@@ -205,8 +214,8 @@ export class ExponentNumber {
   }
 
   log(base: ExponentNumber): ExponentNumber {
-    const result = new ExponentNumber(this.exponentFactor, Math.log10(this.value + 1));
-    result.divide(new ExponentNumber(base.exponentFactor, Math.log10(base.value + 1)));
+    const result = new ExponentNumber(this.exponentFactor, safeLog10(this));
+    result.divide(new ExponentNumber(base.exponentFactor, safeLog10(base)));
 
     this.applyNewValues(result);
 
