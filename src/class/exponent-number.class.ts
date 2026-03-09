@@ -3,7 +3,6 @@ import {
   minusEqualExponentLevelNumber,
   plusDifferentExponentLevelNumber,
   plusEqualExponentLevelNumber,
-  safeLog10,
 } from '../utils/util-math.utils';
 import {
   DECIMAL_DIGITS,
@@ -136,12 +135,21 @@ export class ExponentNumber {
   }
 
   multiply(otherNumber: ExponentNumber): ExponentNumber {
-    const result = new ExponentNumber(this.exponentFactor, safeLog10(this));
+    if (this.exponentFactor === 0 && this.value < 1) {
+      if (otherNumber.exponentFactor > 0) {
+        this.value = otherNumber.value + Math.log10(this.value);
+        this.exponentFactor = otherNumber.exponentFactor;
+      } else {
+        this.value *= otherNumber.value;
+      }
+    } else {
+      const result = new ExponentNumber(this.exponentFactor, Math.log10(this.value));
 
-    result.plus(new ExponentNumber(otherNumber.exponentFactor, safeLog10(otherNumber)));
+      result.plus(new ExponentNumber(otherNumber.exponentFactor, Math.log10(otherNumber.value)));
 
-    this.exponentFactor = result.exponentFactor + 1;
-    this.value = result.value;
+      this.exponentFactor = result.exponentFactor + 1;
+      this.value = result.value;
+    }
 
     this.normalize();
 
@@ -153,12 +161,20 @@ export class ExponentNumber {
       return this;
     }
 
-    const result = new ExponentNumber(this.exponentFactor, safeLog10(this));
+    if (this.exponentFactor === 0 && this.value < 1) {
+      if (otherNumber.exponentFactor > 0) {
+        this.resetValue();
+      } else {
+        this.value /= otherNumber.value;
+      }
+    } else {
+      const result = new ExponentNumber(this.exponentFactor, Math.log10(this.value));
 
-    result.minus(new ExponentNumber(otherNumber.exponentFactor, safeLog10(otherNumber)));
+      result.minus(new ExponentNumber(otherNumber.exponentFactor, Math.log10(otherNumber.value)));
 
-    this.exponentFactor = result.exponentFactor + 1;
-    this.value = result.value;
+      this.exponentFactor = result.exponentFactor + 1;
+      this.value = result.value;
+    }
 
     this.normalize();
 
@@ -168,41 +184,50 @@ export class ExponentNumber {
   power(power: ExponentNumber): ExponentNumber {
     if (this.exponentFactor === 0 && this.value < 1) {
       if (power.exponentFactor > 0) {
-        this.value = 0;
+        this.resetValue();
       } else {
         this.value = Math.pow(this.value, power.value);
       }
     } else {
-      const result = new ExponentNumber(this.exponentFactor, safeLog10(this));
+      const result = new ExponentNumber(this.exponentFactor, Math.log10(this.value));
 
       result.multiply(power);
 
       this.exponentFactor = result.exponentFactor + 1;
       this.value = result.value;
-
-      this.normalize();
     }
+
+    this.normalize();
 
     return this;
   }
 
   root(otherNumber: ExponentNumber): ExponentNumber {
-    const result = new ExponentNumber(this.exponentFactor, safeLog10(this));
+    if (this.exponentFactor === 0 && this.value < 1) {
+      if (otherNumber.exponentFactor > 0) {
+        this.value = 1;
+      } else {
+        this.value = Math.pow(this.value, 1 / otherNumber.value);
+      }
+    } else {
+      const result = new ExponentNumber(this.exponentFactor, Math.log10(this.value));
 
-    if (
-      result.exponentFactor >= 1 &&
-      (otherNumber.exponentFactor > result.exponentFactor ||
-        (otherNumber.exponentFactor === result.exponentFactor && otherNumber.value > result.value))
-    ) {
-      this.resetValue();
+      if (
+        result.exponentFactor >= 1 &&
+        (otherNumber.exponentFactor > result.exponentFactor ||
+          (otherNumber.exponentFactor === result.exponentFactor &&
+            otherNumber.value > result.value))
+      ) {
+        this.resetValue();
+      } else {
+        result.divide(otherNumber);
 
-      return this;
+        this.exponentFactor = result.exponentFactor + 1;
+        this.value = result.value;
+
+        this.normalize();
+      }
     }
-
-    result.divide(otherNumber);
-
-    this.exponentFactor = result.exponentFactor + 1;
-    this.value = result.value;
 
     this.normalize();
 
@@ -214,10 +239,18 @@ export class ExponentNumber {
   }
 
   log(base: ExponentNumber): ExponentNumber {
-    const result = new ExponentNumber(this.exponentFactor, safeLog10(this));
-    result.divide(new ExponentNumber(base.exponentFactor, safeLog10(base)));
+    if (this.exponentFactor === 0 && this.value < 1) {
+      if (base.exponentFactor > 0) {
+        this.resetValue();
+      } else {
+        this.value = Math.log(this.value) / Math.log(base.value);
+      }
+    } else {
+      const result = new ExponentNumber(this.exponentFactor, Math.log10(this.value));
+      result.divide(new ExponentNumber(base.exponentFactor, Math.log10(base.value)));
 
-    this.applyNewValues(result);
+      this.applyNewValues(result);
+    }
 
     this.normalize();
 

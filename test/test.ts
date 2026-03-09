@@ -22,25 +22,25 @@ describe('Print test', () => {
   test('5', () => {
     expect(
       new ExponentNumber(0, Math.pow(10, VALUE_EXPONENT_DIFFERENCE_LIMIT + 1)).toString(),
-    ).toBe('1e13');
+    ).toBe('1e10');
   });
 
   test('6', () => {
     expect(
       new ExponentNumber(0, Math.pow(10, VALUE_EXPONENT_DIFFERENCE_LIMIT + 1.1)).toString(),
-    ).toBe('1.2589e13');
+    ).toBe('1.2589e10');
   });
 
   test('7', () => {
     expect(
       new ExponentNumber(1, Math.pow(10, VALUE_EXPONENT_DIFFERENCE_LIMIT + 1)).toString(),
-    ).toBe('e1e13');
+    ).toBe('e1e10');
   });
 
   test('8', () => {
     expect(
       new ExponentNumber(1, Math.pow(10, VALUE_EXPONENT_DIFFERENCE_LIMIT + 1.1)).toString(),
-    ).toBe('e1.2589e13');
+    ).toBe('e1.2589e10');
   });
 
   test('9', () => {
@@ -48,7 +48,7 @@ describe('Print test', () => {
   });
 
   test('10', () => {
-    expect(new ExponentNumber(5, 1).toString()).toBe('eee10000000000');
+    expect(new ExponentNumber(5, 1).toString()).toBe('eee1e10');
   });
 
   test('11', () => {
@@ -343,6 +343,20 @@ describe('Multiply test', () => {
     first.multiply(second);
     expect(first.toString()).toBe('ee100.3');
   });
+
+  test('13', () => {
+    const first = new ExponentNumber(0, 0.5);
+    const second = new ExponentNumber(0, 0.1);
+    first.multiply(second);
+    expect(first.toString()).toBe('0.05');
+  });
+
+  test('14', () => {
+    const first = new ExponentNumber(0, 0.1);
+    const second = new ExponentNumber(1, 100);
+    first.multiply(second);
+    expect(first.toString()).toBe('1e99');
+  });
 });
 
 describe('Divide test', () => {
@@ -428,6 +442,20 @@ describe('Divide test', () => {
     const second = new ExponentNumber(1, 9.999e99);
     first.divide(second);
     expect(first.toString()).toBe('e1e96');
+  });
+
+  test('13', () => {
+    const first = new ExponentNumber(0, 0.5);
+    const second = new ExponentNumber(0, 0.1);
+    first.divide(second);
+    expect(first.toString()).toBe('5');
+  });
+
+  test('14', () => {
+    const first = new ExponentNumber(0, 0.5);
+    const second = new ExponentNumber(1, 100);
+    first.divide(second);
+    expect(first.toString()).toBe('0');
   });
 });
 
@@ -543,6 +571,20 @@ describe('Power test', () => {
     first.power(second);
     expect(first.toString()).toBe('0.25');
   });
+
+  test('16', () => {
+    const first = new ExponentNumber(0, 0.5);
+    const second = new ExponentNumber(0, 2);
+    first.power(second);
+    expect(first.toString()).toBe('0.25');
+  });
+
+  test('17', () => {
+    const first = new ExponentNumber(0, 0.5);
+    const second = new ExponentNumber(1, 100);
+    first.power(second);
+    expect(first.toString()).toBe('0');
+  });
 });
 
 describe('Root test', () => {
@@ -636,6 +678,20 @@ describe('Root test', () => {
     first.root(second);
     expect(first.toString()).toBe('10');
   });
+
+  test('14', () => {
+    const first = new ExponentNumber(0, 0.01);
+    const second = new ExponentNumber(0, 2);
+    first.root(second);
+    expect(first.toString()).toBe('0.1');
+  });
+
+  test('15', () => {
+    const first = new ExponentNumber(0, 0.1);
+    const second = new ExponentNumber(1, 100);
+    first.root(second);
+    expect(first.toString()).toBe('1');
+  });
 });
 
 describe('Log test', () => {
@@ -705,6 +761,20 @@ describe('Log test', () => {
   test('10', () => {
     const first = new ExponentNumber(2, 100);
     const second = new ExponentNumber(2, 201);
+    first.log(second);
+    expect(first.toString()).toBe('0');
+  });
+
+  test('11', () => {
+    const first = new ExponentNumber(0, 0.1);
+    const second = new ExponentNumber(0, 10);
+    first.log(second);
+    expect(first.toString()).toBe('-1');
+  });
+
+  test('12', () => {
+    const first = new ExponentNumber(0, 0.1);
+    const second = new ExponentNumber(1, 100);
     first.log(second);
     expect(first.toString()).toBe('0');
   });
