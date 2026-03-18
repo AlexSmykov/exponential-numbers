@@ -112,7 +112,7 @@ export class ExponentNumber {
         return this;
       }
 
-      if (this.value === otherNumber.value) {
+      if (this.value <= otherNumber.value) {
         this.resetValue();
 
         return this;

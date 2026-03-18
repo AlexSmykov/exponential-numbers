@@ -257,6 +257,20 @@ describe('Minus test', () => {
     first.minus(second);
     expect(first.toString()).toBe('0');
   });
+
+  test('12', () => {
+    const first = new ExponentNumber(1, 150);
+    const second = new ExponentNumber(1, 120);
+    first.minus(second);
+    expect(first.toString()).toBe('e150');
+  });
+
+  test('13', () => {
+    const first = new ExponentNumber(1, 120);
+    const second = new ExponentNumber(1, 150);
+    first.minus(second);
+    expect(first.toString()).toBe('0');
+  });
 });
 
 describe('Multiply test', () => {

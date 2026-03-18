@@ -76,7 +76,7 @@ export function minusEqualExponentLevelNumber(
     }
 
     if (first.value - second.value > VALUE_EXPONENT_DIFFERENCE_LIMIT) {
-      return first.value - second.value < 0 ? first.copy() : second.copy();
+      return first.copy();
     }
 
     return new ExponentNumber(
