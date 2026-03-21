@@ -471,6 +471,20 @@ describe('Divide test', () => {
     first.divide(second);
     expect(first.toString()).toBe('0');
   });
+
+  test('15', () => {
+    const first = new ExponentNumber(0, 10);
+    const second = new ExponentNumber(0, 100);
+    first.divide(second);
+    expect(first.toString()).toBe('0.1');
+  });
+
+  test('16', () => {
+    const first = new ExponentNumber(1, 100);
+    const second = new ExponentNumber(1, 200);
+    first.divide(second);
+    expect(first.toString()).toBe('0');
+  });
 });
 
 describe('Power test', () => {

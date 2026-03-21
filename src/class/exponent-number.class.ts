@@ -135,10 +135,14 @@ export class ExponentNumber {
   }
 
   multiply(otherNumber: ExponentNumber): ExponentNumber {
-    if (this.exponentFactor === 0 && this.value < 1) {
+    if (this.exponentFactor === 0) {
       if (otherNumber.exponentFactor > 0) {
-        this.value = otherNumber.value + Math.log10(this.value);
-        this.exponentFactor = otherNumber.exponentFactor;
+        if (otherNumber.exponentFactor === 1) {
+          this.value = otherNumber.value + Math.log10(this.value);
+          this.exponentFactor = otherNumber.exponentFactor;
+        } else {
+          this.applyNewValues(otherNumber);
+        }
       } else {
         this.value *= otherNumber.value;
       }
@@ -157,11 +161,11 @@ export class ExponentNumber {
   }
 
   divide(otherNumber: ExponentNumber): ExponentNumber {
-    if (this.exponentFactor === 0 && this.value === 0) {
+    if (this.value === 0 || otherNumber.value === 0) {
       return this;
     }
 
-    if (this.exponentFactor === 0 && this.value < 1) {
+    if (this.exponentFactor === 0) {
       if (otherNumber.exponentFactor > 0) {
         this.resetValue();
       } else {
@@ -169,8 +173,21 @@ export class ExponentNumber {
       }
     } else {
       const result = new ExponentNumber(this.exponentFactor, Math.log10(this.value));
+      const substruction = new ExponentNumber(
+        otherNumber.exponentFactor,
+        Math.log10(otherNumber.value),
+      );
 
-      result.minus(new ExponentNumber(otherNumber.exponentFactor, Math.log10(otherNumber.value)));
+      if (
+        substruction.isGreaterThanValue(result) &&
+        substruction.value - result.value > VALUE_EXPONENT_DIFFERENCE_LIMIT
+      ) {
+        this.resetValue();
+
+        return this;
+      }
+
+      result.minus(substruction);
 
       this.exponentFactor = result.exponentFactor + 1;
       this.value = result.value;
@@ -182,7 +199,7 @@ export class ExponentNumber {
   }
 
   power(power: ExponentNumber): ExponentNumber {
-    if (this.exponentFactor === 0 && this.value < 1) {
+    if (this.exponentFactor === 0) {
       if (power.exponentFactor > 0) {
         this.resetValue();
       } else {
@@ -203,7 +220,7 @@ export class ExponentNumber {
   }
 
   root(otherNumber: ExponentNumber): ExponentNumber {
-    if (this.exponentFactor === 0 && this.value < 1) {
+    if (this.exponentFactor === 0) {
       if (otherNumber.exponentFactor > 0) {
         this.value = 1;
       } else {
@@ -239,7 +256,11 @@ export class ExponentNumber {
   }
 
   log(base: ExponentNumber): ExponentNumber {
-    if (this.exponentFactor === 0 && this.value < 1) {
+    if (this.value < 0 || base.value < 1) {
+      return this;
+    }
+
+    if (this.exponentFactor === 0) {
       if (base.exponentFactor > 0) {
         this.resetValue();
       } else {
