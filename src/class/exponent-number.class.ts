@@ -1,15 +1,10 @@
 import {
-  minusDifferentExponentLevelNumber,
-  minusEqualExponentLevelNumber,
-  plusDifferentExponentLevelNumber,
-  plusEqualExponentLevelNumber,
-} from '../utils/util-math.utils';
-import {
   DECIMAL_DIGITS,
   EXPONENT_COUNT_LIMIT,
   VALUE_EXPONENT_DIFFERENCE_LIMIT,
   VALUE_EXPONENT_LIMIT,
 } from '../const';
+import { minusExponentOne, plusExponentOne } from '../utils/util-math.utils';
 
 export class ExponentNumber {
   exponentFactor = 0;
@@ -37,12 +32,12 @@ export class ExponentNumber {
       this.value = Math.pow(10, this.value);
     }
 
-    while (this.exponentFactor < 0 && this.value > 0) {
+    while (this.exponentFactor < 0 && this.value > 1) {
       this.exponentFactor += 1;
-      this.value = Math.max(Math.log10(this.value), 0);
+      this.value = Math.log10(this.value);
     }
 
-    if (this.value === Math.pow(10, -VALUE_EXPONENT_DIFFERENCE_LIMIT)) {
+    if (Math.abs(this.value) <= Math.pow(10, -VALUE_EXPONENT_DIFFERENCE_LIMIT)) {
       this.resetValue();
     }
   }
@@ -82,173 +77,454 @@ export class ExponentNumber {
   }
 
   plus(otherNumber: ExponentNumber): ExponentNumber {
-    if (this.exponentFactor === otherNumber.exponentFactor) {
-      if (this.exponentFactor > 1) {
-        return this;
+    const isOtherValueSmaller = this.isGreaterThanValue(otherNumber);
+    const biggerValue = isOtherValueSmaller ? this : otherNumber;
+    const smallerValue = isOtherValueSmaller ? otherNumber : this;
+
+    switch (this.exponentFactor) {
+      case 0: {
+        switch (otherNumber.exponentFactor) {
+          case 0: {
+            return new ExponentNumber(0, this.value + otherNumber.value);
+          }
+
+          case 1: {
+            return new ExponentNumber(
+              1,
+              plusExponentOne(otherNumber.value, Math.log10(this.value)),
+            );
+          }
+
+          default: {
+            return new ExponentNumber(otherNumber.exponentFactor, otherNumber.value);
+          }
+        }
       }
 
-      this.applyNewValues(plusEqualExponentLevelNumber(this, otherNumber));
-    } else {
-      if (this.exponentFactor <= 1 && otherNumber.exponentFactor <= 1) {
-        this.applyNewValues(plusDifferentExponentLevelNumber(this, otherNumber));
-      } else {
-        const biggerNumber = this.exponentFactor > otherNumber.exponentFactor ? this : otherNumber;
-        this.applyNewValues(biggerNumber);
+      case 1: {
+        switch (otherNumber.exponentFactor) {
+          case 0: {
+            return new ExponentNumber(
+              1,
+              plusExponentOne(this.value, Math.log10(otherNumber.value)),
+            );
+          }
+
+          case 1: {
+            return new ExponentNumber(1, plusExponentOne(biggerValue.value, smallerValue.value));
+          }
+
+          default: {
+            return new ExponentNumber(otherNumber.exponentFactor, otherNumber.value);
+          }
+        }
+      }
+
+      default: {
+        switch (otherNumber.exponentFactor) {
+          case 0: {
+            return new ExponentNumber(this.exponentFactor, this.value);
+          }
+
+          case 1: {
+            return new ExponentNumber(this.exponentFactor, this.value);
+          }
+
+          default: {
+            return biggerValue;
+          }
+        }
       }
     }
-
-    this.normalize();
-
-    return this;
   }
 
   minus(otherNumber: ExponentNumber): ExponentNumber {
-    if (this.exponentFactor === otherNumber.exponentFactor) {
-      if (this.exponentFactor > 1) {
-        if (otherNumber.value >= this.value) {
-          this.resetValue();
+    const isOtherValueSmaller = this.isGreaterThanValue(otherNumber);
+    const biggerValue = isOtherValueSmaller ? this : otherNumber;
+    const smallerValue = isOtherValueSmaller ? otherNumber : this;
+
+    switch (this.exponentFactor) {
+      case 0: {
+        switch (otherNumber.exponentFactor) {
+          case 0: {
+            return isOtherValueSmaller
+              ? new ExponentNumber(0, this.value - otherNumber.value)
+              : new ExponentNumber(0, 0);
+          }
+
+          case 1: {
+            return new ExponentNumber(0, 0);
+          }
+
+          default: {
+            return new ExponentNumber(0, 0);
+          }
         }
-
-        return this;
       }
 
-      if (this.value <= otherNumber.value) {
-        this.resetValue();
+      case 1: {
+        switch (otherNumber.exponentFactor) {
+          case 0: {
+            return new ExponentNumber(
+              1,
+              minusExponentOne(this.value, Math.log10(otherNumber.value)),
+            );
+          }
 
-        return this;
+          case 1: {
+            return isOtherValueSmaller
+              ? new ExponentNumber(1, minusExponentOne(biggerValue.value, smallerValue.value))
+              : new ExponentNumber(0, 0);
+          }
+
+          default: {
+            return new ExponentNumber(0, 0);
+          }
+        }
       }
 
-      this.applyNewValues(minusEqualExponentLevelNumber(this, otherNumber));
-    } else {
-      if (this.exponentFactor <= 1 && otherNumber.exponentFactor <= 1) {
-        this.applyNewValues(minusDifferentExponentLevelNumber(this, otherNumber));
-      } else {
-        if (otherNumber.exponentFactor >= this.exponentFactor) {
-          this.resetValue();
+      default: {
+        switch (otherNumber.exponentFactor) {
+          case 0: {
+            return new ExponentNumber(this.exponentFactor, this.value);
+          }
+
+          case 1: {
+            return new ExponentNumber(this.exponentFactor, this.value);
+          }
+
+          default: {
+            return isOtherValueSmaller
+              ? new ExponentNumber(this.exponentFactor, this.value)
+              : new ExponentNumber(0, 0);
+          }
         }
       }
     }
-
-    this.normalize();
-
-    return this;
   }
 
   multiply(otherNumber: ExponentNumber): ExponentNumber {
-    if (this.exponentFactor === 0) {
-      if (otherNumber.exponentFactor > 0) {
-        if (otherNumber.exponentFactor === 1) {
-          this.value = otherNumber.value + Math.log10(this.value);
-          this.exponentFactor = otherNumber.exponentFactor;
-        } else {
-          this.applyNewValues(otherNumber);
+    const isOtherValueSmaller = this.isGreaterThanValue(otherNumber);
+    const biggerValue = isOtherValueSmaller ? this : otherNumber;
+
+    switch (this.exponentFactor) {
+      case 0: {
+        switch (otherNumber.exponentFactor) {
+          case 0: {
+            return new ExponentNumber(0, this.value * otherNumber.value);
+          }
+
+          case 1: {
+            if (this.value <= 0) {
+              return new ExponentNumber(0, 0);
+            }
+
+            return new ExponentNumber(1, otherNumber.value + Math.log10(this.value));
+          }
+
+          default: {
+            return new ExponentNumber(otherNumber.exponentFactor, otherNumber.value);
+          }
         }
-      } else {
-        this.value *= otherNumber.value;
       }
-    } else {
-      const result = new ExponentNumber(this.exponentFactor, Math.log10(this.value));
 
-      result.plus(new ExponentNumber(otherNumber.exponentFactor, Math.log10(otherNumber.value)));
+      case 1: {
+        switch (otherNumber.exponentFactor) {
+          case 0: {
+            if (otherNumber.value <= 0) {
+              return new ExponentNumber(this.exponentFactor, this.value);
+            }
 
-      this.exponentFactor = result.exponentFactor + 1;
-      this.value = result.value;
+            return new ExponentNumber(1, this.value + Math.log10(otherNumber.value));
+          }
+
+          case 1: {
+            return new ExponentNumber(1, this.value + otherNumber.value);
+          }
+
+          default: {
+            return new ExponentNumber(
+              2,
+              new ExponentNumber(0, this.value).plus(
+                new ExponentNumber(otherNumber.exponentFactor - 1, otherNumber.value),
+              ).value,
+            );
+          }
+        }
+      }
+
+      default: {
+        switch (otherNumber.exponentFactor) {
+          case 0: {
+            return new ExponentNumber(this.exponentFactor, this.value);
+          }
+
+          case 1: {
+            return new ExponentNumber(
+              this.exponentFactor,
+              new ExponentNumber(this.exponentFactor - 1, this.value).plus(
+                new ExponentNumber(0, otherNumber.value),
+              ).value,
+            );
+          }
+
+          default: {
+            return new ExponentNumber(
+              biggerValue.exponentFactor,
+              new ExponentNumber(this.exponentFactor - 1, this.value).plus(
+                new ExponentNumber(otherNumber.exponentFactor - 1, otherNumber.value),
+              ).value,
+            );
+          }
+        }
+      }
     }
-
-    this.normalize();
-
-    return this;
   }
 
   divide(otherNumber: ExponentNumber): ExponentNumber {
-    if (this.value === 0 || otherNumber.value === 0) {
-      return this;
+    const isOtherValueSmaller = this.isGreaterThanValue(otherNumber);
+
+    if (this.value < 0 || otherNumber.value < 0) {
+      return new ExponentNumber(0, 0);
     }
 
-    if (this.exponentFactor === 0) {
-      if (otherNumber.exponentFactor > 0) {
-        this.resetValue();
-      } else {
-        this.value /= otherNumber.value;
-      }
-    } else {
-      const result = new ExponentNumber(this.exponentFactor, Math.log10(this.value));
-      const substruction = new ExponentNumber(
-        otherNumber.exponentFactor,
-        Math.log10(otherNumber.value),
-      );
-
-      if (
-        substruction.isGreaterThanValue(result) &&
-        substruction.value - result.value > VALUE_EXPONENT_DIFFERENCE_LIMIT
-      ) {
-        this.resetValue();
-
-        return this;
-      }
-
-      result.minus(substruction);
-
-      this.exponentFactor = result.exponentFactor + 1;
-      this.value = result.value;
+    if (this.isEqual(otherNumber)) {
+      return new ExponentNumber(0, 1);
     }
 
-    this.normalize();
+    console.log(this, otherNumber);
+    switch (this.exponentFactor) {
+      case 0: {
+        switch (otherNumber.exponentFactor) {
+          case 0: {
+            return new ExponentNumber(0, this.value / otherNumber.value);
+          }
 
-    return this;
+          case 1: {
+            return new ExponentNumber(
+              1,
+              -minusExponentOne(otherNumber.value, Math.log10(this.value)),
+            );
+          }
+
+          default: {
+            return new ExponentNumber(0, 0);
+          }
+        }
+      }
+
+      case 1: {
+        switch (otherNumber.exponentFactor) {
+          case 0: {
+            return new ExponentNumber(1, this.value - Math.log10(otherNumber.value));
+          }
+
+          case 1: {
+            return new ExponentNumber(0, Math.pow(10, this.value - otherNumber.value));
+          }
+
+          default: {
+            return new ExponentNumber(0, 0);
+          }
+        }
+      }
+
+      default: {
+        switch (otherNumber.exponentFactor) {
+          case 0: {
+            return new ExponentNumber(this.exponentFactor, this.value);
+          }
+
+          case 1: {
+            const subtractedNumber = new ExponentNumber(this.exponentFactor - 1, this.value).minus(
+              new ExponentNumber(0, otherNumber.value),
+            );
+
+            return new ExponentNumber(subtractedNumber.exponentFactor + 1, subtractedNumber.value);
+          }
+
+          default: {
+            if (!isOtherValueSmaller) {
+              return new ExponentNumber(0, 0);
+            }
+
+            const powerMinus = new ExponentNumber(this.exponentFactor - 1, this.value).minus(
+              new ExponentNumber(otherNumber.exponentFactor - 1, otherNumber.value),
+            );
+
+            console.log(powerMinus);
+            return new ExponentNumber(powerMinus.exponentFactor + 1, powerMinus.value);
+          }
+        }
+      }
+    }
   }
 
   power(power: ExponentNumber): ExponentNumber {
-    if (this.exponentFactor === 0) {
-      if (power.exponentFactor > 0) {
-        this.resetValue();
-      } else {
-        this.value = Math.pow(this.value, power.value);
+    switch (this.exponentFactor) {
+      case 0: {
+        switch (power.exponentFactor) {
+          case 0: {
+            return new ExponentNumber(1, Math.log10(this.value) * power.value);
+          }
+
+          case 1: {
+            if (this.value < 1) {
+              return new ExponentNumber(0, 0);
+            }
+
+            const powerMult = new ExponentNumber(0, Math.log10(this.value)).multiply(
+              new ExponentNumber(1, power.value),
+            );
+
+            return new ExponentNumber(powerMult.exponentFactor + 1, powerMult.value);
+          }
+
+          default: {
+            if (this.value < 1) {
+              return new ExponentNumber(0, 0);
+            }
+
+            return new ExponentNumber(
+              power.exponentFactor + 1,
+              new ExponentNumber(0, Math.log10(this.value)).multiply(
+                new ExponentNumber(power.exponentFactor, power.value),
+              ).value,
+            );
+          }
+        }
       }
-    } else {
-      const result = new ExponentNumber(this.exponentFactor, Math.log10(this.value));
 
-      result.multiply(power);
+      case 1: {
+        switch (power.exponentFactor) {
+          case 0: {
+            return new ExponentNumber(1, this.value * power.value);
+          }
 
-      this.exponentFactor = result.exponentFactor + 1;
-      this.value = result.value;
+          case 1: {
+            return new ExponentNumber(2, new ExponentNumber(0, this.value).multiply(power).value);
+          }
+
+          default: {
+            return new ExponentNumber(
+              power.exponentFactor + 1,
+              new ExponentNumber(0, this.value).multiply(
+                new ExponentNumber(power.exponentFactor, power.value),
+              ).value,
+            );
+          }
+        }
+      }
+
+      default: {
+        switch (power.exponentFactor) {
+          case 0: {
+            return new ExponentNumber(
+              this.exponentFactor,
+              new ExponentNumber(this.exponentFactor - 1, this.value).multiply(
+                new ExponentNumber(power.exponentFactor, power.value),
+              ).value,
+            );
+          }
+
+          case 1: {
+            return new ExponentNumber(
+              this.exponentFactor,
+              new ExponentNumber(this.exponentFactor - 1, this.value).multiply(
+                new ExponentNumber(power.exponentFactor, power.value),
+              ).value,
+            );
+          }
+
+          default: {
+            const powerMult = new ExponentNumber(this.exponentFactor - 1, this.value).multiply(
+              new ExponentNumber(power.exponentFactor, power.value),
+            );
+
+            return new ExponentNumber(powerMult.exponentFactor + 1, powerMult.value);
+          }
+        }
+      }
     }
-
-    this.normalize();
-
-    return this;
   }
 
-  root(otherNumber: ExponentNumber): ExponentNumber {
-    if (this.exponentFactor === 0) {
-      if (otherNumber.exponentFactor > 0) {
-        this.value = 1;
-      } else {
-        this.value = Math.pow(this.value, 1 / otherNumber.value);
+  root(base: ExponentNumber): ExponentNumber {
+    const isBaseSmaller = this.isGreaterThanValue(base);
+
+    switch (this.exponentFactor) {
+      case 0: {
+        switch (base.exponentFactor) {
+          case 0: {
+            return new ExponentNumber(0, Math.pow(this.value, 1 / base.value));
+          }
+
+          case 1: {
+            if (this.value <= 1) {
+              return new ExponentNumber(0, 1);
+            }
+
+            return new ExponentNumber(
+              0,
+              new ExponentNumber(0, Math.log10(this.value)).divide(base).value,
+            );
+          }
+
+          default: {
+            return new ExponentNumber(0, 1);
+          }
+        }
       }
-    } else {
-      const result = new ExponentNumber(this.exponentFactor, Math.log10(this.value));
 
-      if (
-        result.exponentFactor >= 1 &&
-        (otherNumber.exponentFactor > result.exponentFactor ||
-          (otherNumber.exponentFactor === result.exponentFactor &&
-            otherNumber.value > result.value))
-      ) {
-        this.resetValue();
-      } else {
-        result.divide(otherNumber);
+      case 1: {
+        switch (base.exponentFactor) {
+          case 0: {
+            if (base.value <= 0) {
+              return new ExponentNumber(0, 1);
+            }
 
-        this.exponentFactor = result.exponentFactor + 1;
-        this.value = result.value;
+            return new ExponentNumber(1, new ExponentNumber(0, this.value).divide(base).value);
+          }
 
-        this.normalize();
+          case 1: {
+            return new ExponentNumber(0, new ExponentNumber(0, this.value).divide(base).value);
+          }
+
+          default: {
+            return new ExponentNumber(0, 1);
+          }
+        }
+      }
+
+      default: {
+        switch (base.exponentFactor) {
+          case 0: {
+            return new ExponentNumber(
+              this.exponentFactor,
+              new ExponentNumber(this.exponentFactor - 1, this.value).divide(base).value,
+            );
+          }
+
+          case 1: {
+            return new ExponentNumber(
+              this.exponentFactor - 1,
+              new ExponentNumber(this.exponentFactor - 1, this.value).divide(base).value,
+            );
+          }
+
+          default: {
+            if (base.isGreaterThanValue(new ExponentNumber(this.exponentFactor - 1, this.value))) {
+              return new ExponentNumber(0, 0);
+            }
+
+            const powerDivide = new ExponentNumber(this.exponentFactor - 1, this.value).divide(
+              base,
+            );
+
+            return new ExponentNumber(powerDivide.exponentFactor + 1, powerDivide.value);
+          }
+        }
       }
     }
-
-    this.normalize();
-
-    return this;
   }
 
   sqrt(): ExponentNumber {
@@ -257,25 +533,67 @@ export class ExponentNumber {
 
   log(base: ExponentNumber): ExponentNumber {
     if (this.value < 0 || base.value < 1) {
-      return this;
+      return new ExponentNumber(this.exponentFactor, this.value);
     }
 
-    if (this.exponentFactor === 0) {
-      if (base.exponentFactor > 0) {
-        this.resetValue();
-      } else {
-        this.value = Math.log(this.value) / Math.log(base.value);
+    switch (this.exponentFactor) {
+      case 0: {
+        switch (base.exponentFactor) {
+          case 0: {
+            return new ExponentNumber(0, Math.log10(this.value) / Math.log10(base.value));
+          }
+
+          case 1: {
+            console.log(Math.log10(this.value), base.value);
+            return new ExponentNumber(0, Math.log10(this.value) / base.value);
+          }
+
+          default: {
+            return new ExponentNumber(0, 0);
+          }
+        }
       }
-    } else {
-      const result = new ExponentNumber(this.exponentFactor, Math.log10(this.value));
-      result.divide(new ExponentNumber(base.exponentFactor, Math.log10(base.value)));
 
-      this.applyNewValues(result);
+      case 1: {
+        switch (base.exponentFactor) {
+          case 0: {
+            return new ExponentNumber(0, this.value / Math.log10(base.value));
+          }
+
+          case 1: {
+            return new ExponentNumber(0, this.value / base.value);
+          }
+
+          default: {
+            return new ExponentNumber(0, this.value).divide(
+              new ExponentNumber(base.exponentFactor - 1, base.value),
+            );
+          }
+        }
+      }
+
+      default: {
+        switch (base.exponentFactor) {
+          case 0: {
+            return new ExponentNumber(this.exponentFactor - 1, this.value).divide(
+              new ExponentNumber(0, Math.log10(base.value)),
+            );
+          }
+
+          case 1: {
+            return new ExponentNumber(this.exponentFactor - 1, this.value).divide(
+              new ExponentNumber(0, base.value),
+            );
+          }
+
+          default: {
+            return new ExponentNumber(this.exponentFactor - 1, this.value).divide(
+              new ExponentNumber(base.exponentFactor - 1, base.value),
+            );
+          }
+        }
+      }
     }
-
-    this.normalize();
-
-    return this;
   }
 
   log10(): ExponentNumber {
