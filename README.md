@@ -1,6 +1,6 @@
 # exponential-number
 
-Small TypeScript package to work with really big numbers — far beyond `Number.MAX_VALUE`.
+Small TypeScript package to work with big numbers — far beyond `Number.MAX_VALUE`.
 
 Made for incremental games and other places where numbers like `1e500` or `10^10^10^100` are normal.
 
