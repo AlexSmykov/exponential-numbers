@@ -26,7 +26,7 @@ const income = ExponentNumber.from('2.5e120');
 const total = money.plus(income).multiply(3).power(2);
 
 total.toString(); // 'e241.75'
-total.isGreaterThanValue(money); // true
+total.greaterThan(money); // true
 
 const format = new ExponentNumberFormat({ notation: standardNotation });
 
@@ -116,23 +116,26 @@ Things to know:
 
 ## Comparison
 
-| Method                             | Result                      |
-| ---------------------------------- | --------------------------- |
-| `isEqual(other)`                   | `a === b`                   |
-| `isGreaterThanValue(other)`        | `a > b`                     |
-| `isGreaterThanOrEqualValue(other)` | `a >= b`                    |
-| `isLessThanValue(other)`           | `a < b`                     |
-| `isLessThanOrEqualValue(other)`    | `a <= b`                    |
-| `compare(other)`                   | `-1`, `0` or `1`, for sorts |
-| `isZero()`                         | `a === 0`                   |
-| `ExponentNumber.max(a, b)`         | bigger one                  |
-| `ExponentNumber.min(a, b)`         | smaller one                 |
+| Method                      | Result                      |
+| --------------------------- | --------------------------- |
+| `equals(other)`             | `a === b`                   |
+| `greaterThan(other)`        | `a > b`                     |
+| `greaterThanOrEqual(other)` | `a >= b`                    |
+| `lessThan(other)`           | `a < b`                     |
+| `lessThanOrEqual(other)`    | `a <= b`                    |
+| `compare(other)`            | `-1`, `0` or `1`, for sorts |
+| `isZero()`                  | `a === 0`                   |
+| `ExponentNumber.max(a, b)`  | bigger one                  |
+| `ExponentNumber.min(a, b)`  | smaller one                 |
 
 ```ts
 numbers.sort((first, second) => first.compare(second));
 ```
 
 Always compare with these methods, not with `===`: an operation may return either a new object or one of its operands.
+
+The old names `isEqual`, `isGreaterThanValue`, `isGreaterThanOrEqualValue`, `isLessThanValue` and
+`isLessThanOrEqualValue` still work, but are deprecated.
 
 ## Converting
 
@@ -220,24 +223,32 @@ Wrong input throws `RangeError`:
 - division by zero and root of degree `0`
 - logarithm with base `0` or `1`
 
-## Migration from 1.x
+## Migration to 3.x
 
-Version 2 has breaking changes.
+Version 3 has breaking changes.
 
-- **Operations do not change the number anymore.** A call without using the result does nothing now:
+### From 1.x
 
-  ```ts
-  // 1.x
-  money.plus(income);
+Operations do not change the number anymore. A call without using the result does nothing now:
 
-  // 2.x
-  money = money.plus(income);
-  ```
+```ts
+// 1.x
+money.plus(income);
+
+// 3.x
+money = money.plus(income);
+```
+
+Everything from the list below applies too.
+
+### From 2.x
+
+Operations already returned a new number in 2.x, so usual calculations keep working. What is different:
 
 - `exponentFactor` and `value` are read-only.
 - `copy`, `normalize`, `applyNewValues` and `resetValue` are removed. They are not needed with immutable numbers.
 - Negative numbers, `NaN` and `Infinity` throw `RangeError` instead of giving a broken number.
-- Division by zero and logarithm with base `1` throw `RangeError` instead of hanging.
+- Division by zero, root of degree `0` and logarithm with base `0` or `1` throw `RangeError`.
 - `minus` gives `0` when the second number is bigger, on every level.
 - A logarithm that would be negative gives `0`.
 - `toString()` shows all integer digits of numbers lower than `1e9`: `123456789` instead of `123460000`.

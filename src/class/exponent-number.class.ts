@@ -85,14 +85,14 @@ export class ExponentNumber {
     const firstNumber = ExponentNumber.from(first);
     const secondNumber = ExponentNumber.from(second);
 
-    return firstNumber.isGreaterThanOrEqualValue(secondNumber) ? firstNumber : secondNumber;
+    return firstNumber.greaterThanOrEqual(secondNumber) ? firstNumber : secondNumber;
   }
 
   static min(first: ExponentNumberSource, second: ExponentNumberSource): ExponentNumber {
     const firstNumber = ExponentNumber.from(first);
     const secondNumber = ExponentNumber.from(second);
 
-    return firstNumber.isGreaterThanValue(secondNumber) ? secondNumber : firstNumber;
+    return firstNumber.greaterThan(secondNumber) ? secondNumber : firstNumber;
   }
 
   toString(): string {
@@ -134,7 +134,7 @@ export class ExponentNumber {
   minus(otherNumberSource: ExponentNumberSource): ExponentNumber {
     const otherNumber = ExponentNumber.from(otherNumberSource);
 
-    if (!this.isGreaterThanValue(otherNumber)) {
+    if (!this.greaterThan(otherNumber)) {
       return new ExponentNumber(0, 0);
     }
 
@@ -212,11 +212,11 @@ export class ExponentNumber {
       return this;
     }
 
-    if (otherNumber.isGreaterThanValue(this)) {
+    if (otherNumber.greaterThan(this)) {
       return new ExponentNumber(0, 0);
     }
 
-    if (this.isEqual(otherNumber)) {
+    if (this.equals(otherNumber)) {
       return new ExponentNumber(0, 1);
     }
 
@@ -332,23 +332,23 @@ export class ExponentNumber {
     return this.exponentFactor === 0 ? new ExponentNumber(0, Math.round(this.value)) : this;
   }
 
-  isGreaterThanValue(otherNumberSource: ExponentNumberSource): boolean {
+  greaterThan(otherNumberSource: ExponentNumberSource): boolean {
     return this.compare(otherNumberSource) > 0;
   }
 
-  isEqual(otherNumberSource: ExponentNumberSource): boolean {
+  equals(otherNumberSource: ExponentNumberSource): boolean {
     return this.compare(otherNumberSource) === 0;
   }
 
-  isGreaterThanOrEqualValue(otherNumberSource: ExponentNumberSource): boolean {
+  greaterThanOrEqual(otherNumberSource: ExponentNumberSource): boolean {
     return this.compare(otherNumberSource) >= 0;
   }
 
-  isLessThanValue(otherNumberSource: ExponentNumberSource): boolean {
+  lessThan(otherNumberSource: ExponentNumberSource): boolean {
     return this.compare(otherNumberSource) < 0;
   }
 
-  isLessThanOrEqualValue(otherNumberSource: ExponentNumberSource): boolean {
+  lessThanOrEqual(otherNumberSource: ExponentNumberSource): boolean {
     return this.compare(otherNumberSource) <= 0;
   }
 
@@ -372,5 +372,30 @@ export class ExponentNumber {
 
   private log10Value(): number {
     return this.exponentFactor === 0 ? Math.log10(this.value) : this.value;
+  }
+
+  /** @deprecated Use `greaterThanOrEqual` instead */
+  isGreaterThanOrEqualValue(otherNumberSource: ExponentNumberSource): boolean {
+    return this.greaterThanOrEqual(otherNumberSource);
+  }
+
+  /** @deprecated Use `lessThanOrEqual` instead */
+  isLessThanOrEqualValue(otherNumberSource: ExponentNumberSource): boolean {
+    return this.lessThanOrEqual(otherNumberSource);
+  }
+
+  /** @deprecated Use `greaterThan` instead */
+  isGreaterThanValue(otherNumberSource: ExponentNumberSource): boolean {
+    return this.greaterThan(otherNumberSource);
+  }
+
+  /** @deprecated Use `lessThan` instead */
+  isLessThanValue(otherNumberSource: ExponentNumberSource): boolean {
+    return this.lessThan(otherNumberSource);
+  }
+
+  /** @deprecated Use `equals` instead */
+  isEqual(otherNumberSource: ExponentNumberSource): boolean {
+    return this.equals(otherNumberSource);
   }
 }

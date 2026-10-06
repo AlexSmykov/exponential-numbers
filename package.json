@@ -3,7 +3,6 @@
   "version": "3.0.0",
   "description": "Small package with class to work with big numbers. This class allows to work with 1e...(1.8e308)...e1e100",
   "main": "dist/index.js",
-  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"

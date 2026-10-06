@@ -694,55 +694,55 @@ describe('More than test', () => {
   test('1', () => {
     const first = new ExponentNumber(0, 1);
     const second = new ExponentNumber(0, 1);
-    expect(first.isGreaterThanValue(second)).toBe(false);
+    expect(first.greaterThan(second)).toBe(false);
   });
 
   test('2', () => {
     const first = new ExponentNumber(0, 1);
     const second = new ExponentNumber(0, 2);
-    expect(first.isGreaterThanValue(second)).toBe(false);
+    expect(first.greaterThan(second)).toBe(false);
   });
 
   test('3', () => {
     const first = new ExponentNumber(0, 2);
     const second = new ExponentNumber(0, 1);
-    expect(first.isGreaterThanValue(second)).toBe(true);
+    expect(first.greaterThan(second)).toBe(true);
   });
 
   test('4', () => {
     const first = new ExponentNumber(1, 1);
     const second = new ExponentNumber(0, 1);
-    expect(first.isGreaterThanValue(second)).toBe(true);
+    expect(first.greaterThan(second)).toBe(true);
   });
 
   test('5', () => {
     const first = new ExponentNumber(1, 1);
     const second = new ExponentNumber(1, 1);
-    expect(first.isGreaterThanValue(second)).toBe(false);
+    expect(first.greaterThan(second)).toBe(false);
   });
 
   test('6', () => {
     const first = new ExponentNumber(1, 2);
     const second = new ExponentNumber(1, 1);
-    expect(first.isGreaterThanValue(second)).toBe(true);
+    expect(first.greaterThan(second)).toBe(true);
   });
 
   test('7', () => {
     const first = new ExponentNumber(1, 1);
     const second = new ExponentNumber(2, 1);
-    expect(first.isGreaterThanValue(second)).toBe(false);
+    expect(first.greaterThan(second)).toBe(false);
   });
 
   test('8', () => {
     const first = new ExponentNumber(1, 1);
     const second = new ExponentNumber(1, 2);
-    expect(first.isGreaterThanValue(second)).toBe(false);
+    expect(first.greaterThan(second)).toBe(false);
   });
 
   test('9', () => {
     const first = new ExponentNumber(100, 100);
     const second = new ExponentNumber(99, 101);
-    expect(first.isGreaterThanValue(second)).toBe(true);
+    expect(first.greaterThan(second)).toBe(true);
   });
 });
 
@@ -750,55 +750,55 @@ describe('Equal test', () => {
   test('1', () => {
     const first = new ExponentNumber(0, 1);
     const second = new ExponentNumber(0, 1);
-    expect(first.isEqual(second)).toBe(true);
+    expect(first.equals(second)).toBe(true);
   });
 
   test('2', () => {
     const first = new ExponentNumber(0, 1);
     const second = new ExponentNumber(0, 2);
-    expect(first.isEqual(second)).toBe(false);
+    expect(first.equals(second)).toBe(false);
   });
 
   test('3', () => {
     const first = new ExponentNumber(0, 2);
     const second = new ExponentNumber(0, 1);
-    expect(first.isEqual(second)).toBe(false);
+    expect(first.equals(second)).toBe(false);
   });
 
   test('4', () => {
     const first = new ExponentNumber(1, 1);
     const second = new ExponentNumber(0, 1);
-    expect(first.isEqual(second)).toBe(false);
+    expect(first.equals(second)).toBe(false);
   });
 
   test('5', () => {
     const first = new ExponentNumber(1, 1);
     const second = new ExponentNumber(1, 1);
-    expect(first.isEqual(second)).toBe(true);
+    expect(first.equals(second)).toBe(true);
   });
 
   test('6', () => {
     const first = new ExponentNumber(1, 2);
     const second = new ExponentNumber(1, 1);
-    expect(first.isEqual(second)).toBe(false);
+    expect(first.equals(second)).toBe(false);
   });
 
   test('7', () => {
     const first = new ExponentNumber(1, 1);
     const second = new ExponentNumber(2, 1);
-    expect(first.isEqual(second)).toBe(false);
+    expect(first.equals(second)).toBe(false);
   });
 
   test('8', () => {
     const first = new ExponentNumber(1, 1);
     const second = new ExponentNumber(1, 2);
-    expect(first.isEqual(second)).toBe(false);
+    expect(first.equals(second)).toBe(false);
   });
 
   test('9', () => {
     const first = new ExponentNumber(100, 100);
     const second = new ExponentNumber(99, 101);
-    expect(first.isEqual(second)).toBe(false);
+    expect(first.equals(second)).toBe(false);
   });
 });
 
@@ -806,55 +806,55 @@ describe('More than or equal test', () => {
   test('1', () => {
     const first = new ExponentNumber(0, 1);
     const second = new ExponentNumber(0, 1);
-    expect(first.isGreaterThanOrEqualValue(second)).toBe(true);
+    expect(first.greaterThanOrEqual(second)).toBe(true);
   });
 
   test('2', () => {
     const first = new ExponentNumber(0, 1);
     const second = new ExponentNumber(0, 2);
-    expect(first.isGreaterThanOrEqualValue(second)).toBe(false);
+    expect(first.greaterThanOrEqual(second)).toBe(false);
   });
 
   test('3', () => {
     const first = new ExponentNumber(0, 2);
     const second = new ExponentNumber(0, 1);
-    expect(first.isGreaterThanOrEqualValue(second)).toBe(true);
+    expect(first.greaterThanOrEqual(second)).toBe(true);
   });
 
   test('4', () => {
     const first = new ExponentNumber(1, 1);
     const second = new ExponentNumber(0, 1);
-    expect(first.isGreaterThanOrEqualValue(second)).toBe(true);
+    expect(first.greaterThanOrEqual(second)).toBe(true);
   });
 
   test('5', () => {
     const first = new ExponentNumber(1, 1);
     const second = new ExponentNumber(1, 1);
-    expect(first.isGreaterThanOrEqualValue(second)).toBe(true);
+    expect(first.greaterThanOrEqual(second)).toBe(true);
   });
 
   test('6', () => {
     const first = new ExponentNumber(1, 2);
     const second = new ExponentNumber(1, 1);
-    expect(first.isGreaterThanOrEqualValue(second)).toBe(true);
+    expect(first.greaterThanOrEqual(second)).toBe(true);
   });
 
   test('7', () => {
     const first = new ExponentNumber(1, 1);
     const second = new ExponentNumber(2, 1);
-    expect(first.isGreaterThanOrEqualValue(second)).toBe(false);
+    expect(first.greaterThanOrEqual(second)).toBe(false);
   });
 
   test('8', () => {
     const first = new ExponentNumber(1, 1);
     const second = new ExponentNumber(1, 2);
-    expect(first.isGreaterThanOrEqualValue(second)).toBe(false);
+    expect(first.greaterThanOrEqual(second)).toBe(false);
   });
 
   test('9', () => {
     const first = new ExponentNumber(100, 100);
     const second = new ExponentNumber(99, 101);
-    expect(first.isGreaterThanOrEqualValue(second)).toBe(true);
+    expect(first.greaterThanOrEqual(second)).toBe(true);
   });
 });
 
@@ -1041,7 +1041,7 @@ describe('From test', () => {
 
   test('8', () => {
     const number = new ExponentNumber(2, 1.2345e50);
-    expect(ExponentNumber.from(JSON.parse(JSON.stringify(number))).isEqual(number)).toBe(true);
+    expect(ExponentNumber.from(JSON.parse(JSON.stringify(number))).equals(number)).toBe(true);
   });
 
   test('9', () => {
@@ -1108,23 +1108,23 @@ describe('Compare test', () => {
   });
 
   test('5', () => {
-    expect(new ExponentNumber(0, 1).isLessThanValue(2)).toBe(true);
+    expect(new ExponentNumber(0, 1).lessThan(2)).toBe(true);
   });
 
   test('6', () => {
-    expect(new ExponentNumber(0, 2).isLessThanValue(2)).toBe(false);
+    expect(new ExponentNumber(0, 2).lessThan(2)).toBe(false);
   });
 
   test('7', () => {
-    expect(new ExponentNumber(1, 100).isLessThanValue(5)).toBe(false);
+    expect(new ExponentNumber(1, 100).lessThan(5)).toBe(false);
   });
 
   test('8', () => {
-    expect(new ExponentNumber(0, 2).isLessThanOrEqualValue(2)).toBe(true);
+    expect(new ExponentNumber(0, 2).lessThanOrEqual(2)).toBe(true);
   });
 
   test('9', () => {
-    expect(new ExponentNumber(0, 3).isLessThanOrEqualValue(2)).toBe(false);
+    expect(new ExponentNumber(0, 3).lessThanOrEqual(2)).toBe(false);
   });
 
   test('10', () => {
@@ -1424,5 +1424,19 @@ describe('Format class test', () => {
 
   test('8', () => {
     expect(() => new ExponentNumberFormat({ exponentCountLimit: -1 })).toThrow(RangeError);
+  });
+});
+
+describe('Deprecated names test', () => {
+  test('1', () => {
+    const first = new ExponentNumber(1, 100);
+    const second = new ExponentNumber(0, 5);
+
+    expect(first.isGreaterThanValue(second)).toBe(true);
+    expect(first.isGreaterThanOrEqualValue(second)).toBe(true);
+    expect(first.isLessThanValue(second)).toBe(false);
+    expect(first.isLessThanOrEqualValue(second)).toBe(false);
+    expect(first.isEqual(second)).toBe(false);
+    expect(first.isEqual(first)).toBe(true);
   });
 });
