@@ -15,7 +15,7 @@ export function plusEqualExponentLevelNumber(
 
   if (second.exponentFactor === 1) {
     if (Math.abs(first.value - second.value) > VALUE_EXPONENT_DIFFERENCE_LIMIT) {
-      return first.value - second.value > 0 ? first.copy() : second.copy();
+      return first.value - second.value > 0 ? first : second;
     }
 
     const biggerValue = Math.max(first.value, second.value);
@@ -49,7 +49,7 @@ export function plusDifferentExponentLevelNumber(
   const exponentDifference = biggerValue.value - smallValueExponent;
 
   if (exponentDifference > VALUE_EXPONENT_DIFFERENCE_LIMIT) {
-    return biggerValue.copy();
+    return biggerValue;
   }
 
   return new ExponentNumber(
@@ -76,7 +76,7 @@ export function minusEqualExponentLevelNumber(
     }
 
     if (first.value - second.value > VALUE_EXPONENT_DIFFERENCE_LIMIT) {
-      return first.value - second.value < 0 ? first.copy() : second.copy();
+      return first;
     }
 
     return new ExponentNumber(
@@ -85,10 +85,7 @@ export function minusEqualExponentLevelNumber(
     );
   }
 
-  return new ExponentNumber(
-    0,
-    Math.max(first.value - second.value, -VALUE_EXPONENT_DIFFERENCE_LIMIT),
-  );
+  return new ExponentNumber(0, Math.max(first.value - second.value, 0));
 }
 
 export function minusDifferentExponentLevelNumber(
@@ -111,7 +108,7 @@ export function minusDifferentExponentLevelNumber(
   const exponentDifference = first.value - smallValueExponent;
 
   if (exponentDifference > VALUE_EXPONENT_DIFFERENCE_LIMIT) {
-    return first.copy();
+    return first;
   }
 
   return new ExponentNumber(1, first.value + Math.log10(1 - 1 / Math.pow(10, exponentDifference)));
